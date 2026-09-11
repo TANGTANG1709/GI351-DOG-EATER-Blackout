@@ -8,17 +8,26 @@ public class AttackLaser : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private InputActionAsset inputActions;
-    [SerializeField] private GameObject laserBox;
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private PlayerSanity playerSanity;
 
+    [Header("Projectile")]
+    [SerializeField] private float projectileSpeed = 18f;
+    [SerializeField] private float projectileDamage = 25f;
+    [SerializeField] private float projectileLifetime = 2f;
+    [SerializeField] private float fireCooldown = 0.15f;
+
     private InputAction attackAction;
-    private bool isAttacking;
+    private float nextFireTime;
 
     private void Awake()
     {
         InputActionMap playerActionMap = inputActions?.FindActionMap(PlayerActionMapName);
         attackAction = playerActionMap?.FindAction(AttackActionName);
-        SetLaserActive(false);
+
+        if (projectileSpawnPoint == null)
+            projectileSpawnPoint = transform;
     }
 
     private void OnEnable()
@@ -28,7 +37,6 @@ public class AttackLaser : MonoBehaviour
 
         attackAction.Enable();
         attackAction.performed += OnAttackPerformed;
-        attackAction.canceled += OnAttackCanceled;
     }
 
     private void OnDisable()
@@ -36,22 +44,9 @@ public class AttackLaser : MonoBehaviour
         if (attackAction != null)
         {
             attackAction.performed -= OnAttackPerformed;
-            attackAction.canceled -= OnAttackCanceled;
             attackAction.Disable();
         }
 
-        SetLaserActive(false);
-    }
-
-    private void Update()
-    {
-        if (!isAttacking || playerSanity == null)
-            return;
-
-        playerSanity.Drain(Time.deltaTime);
-
-        if (!playerSanity.HasSanity)
-            SetLaserActive(false);
     }
 
     private void OnAttackPerformed(InputAction.CallbackContext ctx)
@@ -59,19 +54,30 @@ public class AttackLaser : MonoBehaviour
         if (playerSanity != null && !playerSanity.HasSanity)
             return;
 
-        SetLaserActive(true);
-    }
+        if (Time.time < nextFireTime || projectilePrefab == null || projectileSpawnPoint == null)
+            return;
 
-    private void OnAttackCanceled(InputAction.CallbackContext ctx)
-    {
-        SetLaserActive(false);
-    }
+        GameObject projectileObject = Instantiate(
+            projectilePrefab,
+            projectileSpawnPoint.position,
+            projectileSpawnPoint.rotation
+        );
 
-    private void SetLaserActive(bool isActive)
-    {
-        isAttacking = isActive;
+        LaserProjectile projectile = projectileObject.GetComponent<LaserProjectile>();
+        if (projectile == null)
+        {
+            Destroy(projectileObject);
+            return;
+        }
 
-        if (laserBox != null)
-            laserBox.SetActive(isActive);
+        projectile.Launch(
+            projectileSpawnPoint.right,
+            projectileSpeed,
+            projectileDamage,
+            projectileLifetime,
+            gameObject
+        );
+
+        nextFireTime = Time.time + fireCooldown;
     }
 }

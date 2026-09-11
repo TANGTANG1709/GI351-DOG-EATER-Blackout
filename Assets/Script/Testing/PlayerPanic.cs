@@ -61,7 +61,7 @@ public class PlayerPanic : MonoBehaviour
     {
         float nearestDistance = float.MaxValue;
         int nearbyEnemyCount = 0;
-        EnemyAI[] enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
+        EnemyAI[] enemies = FindObjectsByType<EnemyAI>();
 
         foreach (EnemyAI enemy in enemies)
         {

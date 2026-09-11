@@ -12,7 +12,8 @@ public class LaserDamageDealer : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!other.TryGetComponent<IDamageable>(out IDamageable damageable))
+        IDamageable damageable = other.GetComponentInParent<IDamageable>();
+        if (damageable == null)
             return;
 
         ApplyDamageIfReady(damageable);

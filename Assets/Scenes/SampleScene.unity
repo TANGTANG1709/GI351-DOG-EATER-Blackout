@@ -1927,8 +1927,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackLaser
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  laserBox: {fileID: 70845666}
+  projectilePrefab: {fileID: 1000000000000000000, guid: 7a9f3c1e5b2d4a6c8e0f123456789abc, type: 3}
+  projectileSpawnPoint: {fileID: 63153528}
   playerSanity: {fileID: 1904515110}
+  projectileSpeed: 18
+  projectileDamage: 25
+  projectileLifetime: 2
+  fireCooldown: 0.15
 --- !u!114 &1904515110
 MonoBehaviour:
   m_ObjectHideFlags: 0

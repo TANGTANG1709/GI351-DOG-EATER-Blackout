@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class AttackAim : MonoBehaviour
 {
@@ -30,7 +31,11 @@ public class AttackAim : MonoBehaviour
         if (attackPoint == null || cam == null)
             return;
 
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Mouse.current == null)
+            return;
+
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Ray ray = cam.ScreenPointToRay(mousePosition);
         groundPlane = new Plane(Vector3.up, attackPoint.position);
 
         if (!groundPlane.Raycast(ray, out float distance))

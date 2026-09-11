@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
             return;
 
         Vector2 movementInput = moveAction.ReadValue<Vector2>();
+        movementInput = Vector2.ClampMagnitude(movementInput, 1f);
         moveDir = new Vector3(movementInput.x, 0.0f, movementInput.y);
         isSprinting = sprintAction?.IsPressed() == true;
 

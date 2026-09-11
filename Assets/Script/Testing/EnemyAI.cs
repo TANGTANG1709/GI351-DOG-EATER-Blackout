@@ -49,7 +49,8 @@ public class EnemyAI : MonoBehaviour
         if (playerTransform == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            playerTransform = playerObj.transform;
+            if (playerObj != null)
+                playerTransform = playerObj.transform;
         }
 
         if (playerTransform != null)
