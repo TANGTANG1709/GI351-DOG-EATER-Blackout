@@ -2,39 +2,54 @@ using UnityEngine;
 
 public class EnemyHealthBar : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private EnemyHealth enemyHealth;
-    [SerializeField] private Transform fillTransform; // the fill sprite's Transform
+    [SerializeField] private Transform fillTransform;
+    [SerializeField] private GameObject barRoot;
+
+    [Header("Display")]
     [SerializeField] private bool hideWhenFull = true;
-    [SerializeField] private GameObject barRoot; // parent of background+fill, to hide/show
 
     private float fullScaleX;
 
     private void Awake()
     {
-        fullScaleX = fillTransform.localScale.x;
+        if (fillTransform != null)
+            fullScaleX = fillTransform.localScale.x;
     }
 
     private void OnEnable()
     {
-        enemyHealth.OnHealthChanged += HandleHealthChanged;
+        if (enemyHealth != null)
+            enemyHealth.OnHealthChanged += HandleHealthChanged;
     }
 
     private void OnDisable()
     {
-        enemyHealth.OnHealthChanged -= HandleHealthChanged;
+        if (enemyHealth != null)
+            enemyHealth.OnHealthChanged -= HandleHealthChanged;
     }
 
     private void HandleHealthChanged(float current, float max)
     {
-        float pct = Mathf.Clamp01(current / max);
+        if (fillTransform == null)
+            return;
 
+        float healthPercentage = max > 0f ? Mathf.Clamp01(current / max) : 0f;
+        UpdateFillScale(healthPercentage);
+        UpdateVisibility(healthPercentage);
+    }
+
+    private void UpdateFillScale(float healthPercentage)
+    {
         Vector3 scale = fillTransform.localScale;
-        scale.x = fullScaleX * pct;
+        scale.x = fullScaleX * healthPercentage;
         fillTransform.localScale = scale;
+    }
 
+    private void UpdateVisibility(float healthPercentage)
+    {
         if (hideWhenFull && barRoot != null)
-        {
-            barRoot.SetActive(pct < 1f);
-        }
+            barRoot.SetActive(healthPercentage < 1f);
     }
 }

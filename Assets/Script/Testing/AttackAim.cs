@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class AttackAim : MonoBehaviour
 {
+    private const float MinimumAimDistance = 0.0001f;
+    private const float AttackPointRotationOffset = -90f;
+
     [Header("References")]
     [SerializeField] private Transform attackPoint;
     [SerializeField] private Camera cam;
@@ -13,7 +16,8 @@ public class AttackAim : MonoBehaviour
 
     private void Awake()
     {
-        if (cam == null) cam = Camera.main;
+        if (cam == null)
+            cam = Camera.main;
     }
 
     private void Update()
@@ -23,28 +27,28 @@ public class AttackAim : MonoBehaviour
 
     private void AimAttackPointAtMouse()
     {
-        groundPlane = new Plane(Vector3.up, attackPoint.position);
+        if (attackPoint == null || cam == null)
+            return;
 
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        groundPlane = new Plane(Vector3.up, attackPoint.position);
 
-        if (groundPlane.Raycast(ray, out float distance))
-        {
-            Vector3 worldMousePos = ray.GetPoint(distance);
+        if (!groundPlane.Raycast(ray, out float distance))
+            return;
 
-            Vector3 direction = worldMousePos - attackPoint.position;
-            direction.y = 0f;
+        Vector3 directionToMouse = ray.GetPoint(distance) - attackPoint.position;
+        directionToMouse.y = 0f;
 
-            if (direction.sqrMagnitude > 0.0001f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up)
-                                           * Quaternion.Euler(0f, -90f, 0f);
+        if (directionToMouse.sqrMagnitude <= MinimumAimDistance)
+            return;
 
-                attackPoint.rotation = Quaternion.Slerp(
-                    attackPoint.rotation,
-                    targetRotation,
-                    rotationSpeed * Time.deltaTime
-                );
-            }
-        }
+        Quaternion targetRotation = Quaternion.LookRotation(directionToMouse, Vector3.up)
+                                   * Quaternion.Euler(0f, AttackPointRotationOffset, 0f);
+
+        attackPoint.rotation = Quaternion.Slerp(
+            attackPoint.rotation,
+            targetRotation,
+            rotationSpeed * Time.deltaTime
+        );
     }
 }

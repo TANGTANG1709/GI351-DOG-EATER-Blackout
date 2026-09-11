@@ -4,25 +4,33 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class LaserDamageDealer : MonoBehaviour
 {
+    [Header("Damage")]
     [SerializeField] private float damagePerTick = 10f;
-    [SerializeField] private float tickInterval = 0.2f; // re-damage same target every 0.2s while it's held on them
+    [SerializeField] private float tickInterval = 0.2f;
 
-    private readonly Dictionary<IDamageable, float> nextTickTime = new();
+    private readonly Dictionary<IDamageable, float> nextDamageTime = new();
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.TryGetComponent<IDamageable>(out var damageable))
-        {
-            if (!nextTickTime.TryGetValue(damageable, out float nextTime) || Time.time >= nextTime)
-            {
-                damageable.TakeDamage(damagePerTick);
-                nextTickTime[damageable] = Time.time + tickInterval;
-            }
-        }
+        if (!other.TryGetComponent<IDamageable>(out IDamageable damageable))
+            return;
+
+        ApplyDamageIfReady(damageable);
+    }
+
+    private void ApplyDamageIfReady(IDamageable damageable)
+    {
+        float currentTime = Time.time;
+
+        if (nextDamageTime.TryGetValue(damageable, out float nextTime) && currentTime < nextTime)
+            return;
+
+        damageable.TakeDamage(damagePerTick);
+        nextDamageTime[damageable] = currentTime + tickInterval;
     }
 
     private void OnDisable()
     {
-        nextTickTime.Clear(); // reset ticks so re-triggering deals damage immediately next swing
+        nextDamageTime.Clear();
     }
 }
