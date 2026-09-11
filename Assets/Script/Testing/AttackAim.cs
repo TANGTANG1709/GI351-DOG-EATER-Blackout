@@ -3,11 +3,11 @@ using UnityEngine;
 public class AttackAim : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Transform attackPoint; // the pivot child
-    [SerializeField] private Camera cam;             // defaults to Camera.main if empty
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private Camera cam;
 
     [Header("Settings")]
-    [SerializeField] private float rotationSpeed = 15f; // higher = snappier turn
+    [SerializeField] private float rotationSpeed = 15f;
 
     private Plane groundPlane;
 
@@ -36,8 +36,6 @@ public class AttackAim : MonoBehaviour
 
             if (direction.sqrMagnitude > 0.0001f)
             {
-                // LookRotation aims local Z at 'direction'; offset -90° on Y
-                // so local X (red, your weapon's forward) aims at 'direction' instead.
                 Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up)
                                            * Quaternion.Euler(0f, -90f, 0f);
 
