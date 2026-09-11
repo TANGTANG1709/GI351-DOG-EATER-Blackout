@@ -2,16 +2,25 @@ using UnityEngine;
 
 public class PlayerPanic : MonoBehaviour
 {
+    public enum PanicLevel { Calm, Warning, Critical }
+
     [Header("Detection")]
     [SerializeField] private float panicStartDistance = 6f;
     [SerializeField] private float maximumPanicDistance = 1.5f;
     [SerializeField] private float scanInterval = 0.1f;
+    [SerializeField] private int maxNearbyEnemies = 3;
+    [SerializeField, Range(0f, 0.5f)] private float crowdPanicBonus = 0.12f;
 
     [Header("Response")]
     [SerializeField] private float panicSmoothing = 2.5f;
     [SerializeField] private PanicCameraShake cameraShake;
 
     public float CurrentPanic { get; private set; }
+    public PanicLevel CurrentLevel => CurrentPanic >= 0.66f
+        ? PanicLevel.Critical
+        : CurrentPanic >= 0.33f
+            ? PanicLevel.Warning
+            : PanicLevel.Calm;
 
     private float targetPanic;
     private float scanTimer;
@@ -25,6 +34,7 @@ public class PlayerPanic : MonoBehaviour
             if (cameraShake == null)
                 cameraShake = Camera.main.gameObject.AddComponent<PanicCameraShake>();
         }
+
 
     }
 
@@ -50,6 +60,7 @@ public class PlayerPanic : MonoBehaviour
     private float CalculateTargetPanic()
     {
         float nearestDistance = float.MaxValue;
+        int nearbyEnemyCount = 0;
         EnemyAI[] enemies = FindObjectsByType<EnemyAI>(FindObjectsSortMode.None);
 
         foreach (EnemyAI enemy in enemies)
@@ -59,6 +70,9 @@ public class PlayerPanic : MonoBehaviour
 
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
             nearestDistance = Mathf.Min(nearestDistance, distance);
+
+            if (distance < panicStartDistance)
+                nearbyEnemyCount++;
         }
 
         if (nearestDistance == float.MaxValue || nearestDistance >= panicStartDistance)
@@ -69,6 +83,9 @@ public class PlayerPanic : MonoBehaviour
             maximumPanicDistance,
             nearestDistance
         );
+
+        int additionalEnemies = Mathf.Clamp(nearbyEnemyCount - 1, 0, Mathf.Max(0, maxNearbyEnemies - 1));
+        panic += additionalEnemies * crowdPanicBonus;
 
         return Mathf.Clamp01(panic);
     }
