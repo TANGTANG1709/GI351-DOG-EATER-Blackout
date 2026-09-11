@@ -1719,6 +1719,7 @@ GameObject:
   - component: {fileID: 1904515110}
   - component: {fileID: 1904515111}
   - component: {fileID: 1904515112}
+  - component: {fileID: 1904515113}
   - component: {fileID: 1904515108}
   - component: {fileID: 1904515109}
   - component: {fileID: 1904515107}
@@ -1974,6 +1975,23 @@ MonoBehaviour:
   playerAbilities: {fileID: 1904515111}
   spriteRenderer: {fileID: 1904515102}
   flickDuration: 0.2
+--- !u!114 &1904515113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904515101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e0b4c5e1a9f4a87a8b0b6b8c2f7d901, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPanic
+  panicStartDistance: 6
+  maximumPanicDistance: 1.5
+  scanInterval: 0.1
+  panicSmoothing: 8
+  cameraShake: {fileID: 0}
 --- !u!1 &1962541983
 GameObject:
   m_ObjectHideFlags: 0
