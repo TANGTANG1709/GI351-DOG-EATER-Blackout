@@ -8,7 +8,7 @@ public class PlayerPanic : MonoBehaviour
     [SerializeField] private float scanInterval = 0.1f;
 
     [Header("Response")]
-    [SerializeField] private float panicSmoothing = 8f;
+    [SerializeField] private float panicSmoothing = 2.5f;
     [SerializeField] private PanicCameraShake cameraShake;
 
     public float CurrentPanic { get; private set; }
@@ -25,6 +25,7 @@ public class PlayerPanic : MonoBehaviour
             if (cameraShake == null)
                 cameraShake = Camera.main.gameObject.AddComponent<PanicCameraShake>();
         }
+
     }
 
     private void Update()
