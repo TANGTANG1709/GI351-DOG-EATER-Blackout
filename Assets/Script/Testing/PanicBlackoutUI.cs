@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 public class PanicBlackoutUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private PlayerPanic playerPanic;
+    [SerializeField] private WorldStability worldStability;
     [SerializeField] private RectTransform topEdge;
     [SerializeField] private RectTransform bottomEdge;
     [SerializeField] private RectTransform leftEdge;
@@ -42,8 +42,8 @@ public class PanicBlackoutUI : MonoBehaviour
 
     private void Update()
     {
-        float panic = playerPanic != null ? playerPanic.CurrentPanic : 0f;
-        visualPanic = Mathf.MoveTowards(visualPanic, panic, responseSpeed * Time.deltaTime);
+        float instability = worldStability != null ? worldStability.Instability : 0f;
+        visualPanic = Mathf.MoveTowards(visualPanic, instability, responseSpeed * Time.deltaTime);
         UpdateEdges(visualPanic);
 
         if (vignette != null)

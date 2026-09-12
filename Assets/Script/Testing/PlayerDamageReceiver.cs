@@ -4,7 +4,7 @@ using System.Collections;
 public class PlayerDamageReceiver : MonoBehaviour, IDamageable
 {
     [Header("References")]
-    [SerializeField] private PlayerSanity playerSanity;
+    [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private PlayerAbilities playerAbilities;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
@@ -13,7 +13,7 @@ public class PlayerDamageReceiver : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        playerSanity ??= GetComponent<PlayerSanity>();
+        playerHealth ??= GetComponent<PlayerHealth>();
         playerAbilities ??= GetComponent<PlayerAbilities>();
         spriteRenderer ??= GetComponentInChildren<SpriteRenderer>();
     }
@@ -23,7 +23,7 @@ public class PlayerDamageReceiver : MonoBehaviour, IDamageable
         if (playerAbilities != null && playerAbilities.TryConsumeShield())
             return;
 
-        playerSanity?.Reduce(amount);
+        playerHealth?.TakeDamage(amount);
         StartCoroutine(FlickWhite());
     }
 

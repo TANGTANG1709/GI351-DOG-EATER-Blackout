@@ -5,7 +5,6 @@ public class PlayerSanity : MonoBehaviour
 {
     [Header("Sanity")]
     [SerializeField] private float maxSanity = 100f;
-    [SerializeField] private float drainPerSecond = 20f;
     [SerializeField] private float rechargePerSecond = 15f;
 
     private float currentSanity;
@@ -24,13 +23,8 @@ public class PlayerSanity : MonoBehaviour
         NotifySanityChanged();
     }
 
-    public void Drain(float deltaTime)
+    private void Update()
     {
-        if (currentSanity <= 0f)
-            return;
-
-        currentSanity = Mathf.Max(currentSanity - drainPerSecond * deltaTime, 0f);
-        NotifySanityChanged();
     }
 
     public void Reduce(float amount)
@@ -71,4 +65,5 @@ public class PlayerSanity : MonoBehaviour
     {
         OnSanityChanged?.Invoke(currentSanity, maxSanity);
     }
+
 }

@@ -29,6 +29,6 @@ public class SanityUI : MonoBehaviour
             sanityFillImage.fillAmount = percentage;
 
         if (sanityText != null)
-            sanityText.text = $"{Mathf.CeilToInt(current)}/{Mathf.CeilToInt(max)}";
+            sanityText.text = $"SANITY {Mathf.CeilToInt(current)}/{Mathf.CeilToInt(max)}";
     }
 }

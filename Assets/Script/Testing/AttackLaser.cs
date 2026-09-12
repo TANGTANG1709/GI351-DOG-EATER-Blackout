@@ -17,6 +17,7 @@ public class AttackLaser : MonoBehaviour
     [SerializeField] private float projectileDamage = 25f;
     [SerializeField] private float projectileLifetime = 2f;
     [SerializeField] private float fireCooldown = 0.15f;
+    [SerializeField] private float sanityCostPerShot = 2f;
 
     private InputAction attackAction;
     private float nextFireTime;
@@ -51,10 +52,10 @@ public class AttackLaser : MonoBehaviour
 
     private void OnAttackPerformed(InputAction.CallbackContext ctx)
     {
-        if (playerSanity != null && !playerSanity.HasSanity)
+        if (Time.time < nextFireTime || projectilePrefab == null || projectileSpawnPoint == null)
             return;
 
-        if (Time.time < nextFireTime || projectilePrefab == null || projectileSpawnPoint == null)
+        if (playerSanity == null || !playerSanity.TrySpend(sanityCostPerShot))
             return;
 
         GameObject projectileObject = Instantiate(
