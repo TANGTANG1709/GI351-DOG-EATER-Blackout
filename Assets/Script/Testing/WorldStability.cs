@@ -6,6 +6,7 @@ public class WorldStability : MonoBehaviour
     [Header("Stability")]
     [SerializeField] private float maxStability = 100f;
     [SerializeField] private float decayPerEnemyPerSecond = 0.1f;
+    [SerializeField] private float stabilityGainOnKill = 5f;
     [SerializeField] private float scanInterval = 0.25f;
 
     private float currentStability;
@@ -24,6 +25,16 @@ public class WorldStability : MonoBehaviour
     private void Awake()
     {
         currentStability = Mathf.Max(maxStability, 0f);
+    }
+
+    private void OnEnable()
+    {
+        EnemyHealth.AnyEnemyDied += HandleEnemyDied;
+    }
+
+    private void OnDisable()
+    {
+        EnemyHealth.AnyEnemyDied -= HandleEnemyDied;
     }
 
     private void Start()
@@ -62,5 +73,10 @@ public class WorldStability : MonoBehaviour
     private void NotifyStabilityChanged()
     {
         OnStabilityChanged?.Invoke(currentStability, maxStability);
+    }
+
+    private void HandleEnemyDied(EnemyHealth enemy)
+    {
+        Restore(stabilityGainOnKill);
     }
 }
